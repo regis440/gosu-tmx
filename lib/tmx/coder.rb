@@ -1,4 +1,4 @@
-module TMX
+module Tmx
   module Coder
     # default coders
     autoload :Base64, 'tmx/coder/base64'
@@ -35,4 +35,5 @@ module TMX
     end # register_coder
     
   end # Coder
+  
 end

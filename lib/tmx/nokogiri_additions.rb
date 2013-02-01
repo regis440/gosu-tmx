@@ -19,9 +19,9 @@ class Nokogiri::XML::Node
     when %r(^ [+-]?     \d+ \. \d+                $)ix then str.to_f
     when %r(^ [+-]?     \d+                       $)ix then str.to_i
     when %r(^ \# [0-9a-f]{6} $)ix
-      Gosu::Color.new 0xff000000 | str[1..6].to_i(16)
+      0xff000000 | str[1..6].to_i(16)
     when %r(^ \# [0-9a-f]{8} $)ix
-      Gosu::Color.new str[1..8].to_i(16)
+      str[1..8].to_i(16)
     else str
     end
   end
@@ -49,7 +49,7 @@ class Nokogiri::XML::Element
     data = ''
     xpath('data').each do |data_element|
       attrs = data_element.tmx_parse_attributes
-      data << TMX::Coder.decode(data_element.text, attrs[:compression], attrs[:encoding])
+      data << Tmx::Coder.decode(data_element.text, attrs[:compression], attrs[:encoding])
     end
     data
   end

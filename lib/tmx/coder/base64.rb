@@ -1,4 +1,4 @@
-module TMX
+module Tmx
   module Coder
     module Base64
       def self.encode str

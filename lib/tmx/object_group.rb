@@ -1,4 +1,4 @@
-module TMX
+module Tmx
   class ObjectGroup
     include Enumerable
     
@@ -25,6 +25,9 @@ module TMX
     
     def each &block
       @objects.each_value &block
+    end
+    def size
+      @objects.size
     end
   end
 end

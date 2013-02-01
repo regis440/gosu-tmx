@@ -1,4 +1,4 @@
-module TMX
+module Tmx
   module Coder
     module Gzip
       def self.encode str

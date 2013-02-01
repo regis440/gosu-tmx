@@ -1,18 +1,20 @@
-module TMX
+require_relative 'tile_set'
+module Tmx
   class Map
     # autoload :TileCache, 'tmx/map/tile_cache'
     autoload :XMLLoader, 'tmx/map/xml_loader'
-    
+
+
     include XMLLoader
-    
-    attr_reader :window
-    
+
+
     attr_reader :properties
     attr_reader :columns,    :rows
     attr_reader :width,      :height
     attr_reader :tile_width, :tile_height
     
-    attr_reader :tile_set, :layers, :object_groups
+    attr_reader :layers, :object_groups, :tile_set
+    attr_reader :window
     
     DEFAULT_OPTIONS = {
       # Scales pixel units to tile units (if true) or user-defined scale (if
@@ -37,6 +39,7 @@ module TMX
     }
     
     def initialize window, file_name, options = {}
+      @window = window
       options = DEFAULT_OPTIONS.merge options
       
       # TODO move this XML code to an external module
@@ -52,11 +55,10 @@ module TMX
         doc.root
       end
       
-      # TODO proper version check; learn about TMX versions if there are any
+      # TODO proper version check; learn about Tmx versions if there are any
       raise "Only version 1.0 maps are currently supported" unless mapdef['version']     == '1.0'
       raise "Only orthogonal maps are currently supported"  unless mapdef['orientation'] == 'orthogonal'
       
-      @window = window
       # @cache  = TileCache.new self
       
       @tile_width  = mapdef['tilewidth'].to_i
@@ -92,8 +94,8 @@ module TMX
       @on_object = options[:on_object]
       
       mapdef.xpath('tileset').each do |xml|
-        @tile_set.load_tiles *parse_tile_set_def(xml)
-      end
+         @tile_set.load_tiles *parse_tile_set_def(xml)
+       end
       
       mapdef.xpath('layer').each do |xml|
         layer = parse_layer_def xml
@@ -101,9 +103,10 @@ module TMX
         @layers[name] = layer
       end # layers
       
+
       mapdef.xpath('objectgroup').each do |xml|
         group = parse_object_group_def xml
-        name  = group.properties[:name]
+        name  = group.name
         @object_groups[name] = group
       end # object groups
       
@@ -117,9 +120,9 @@ module TMX
       
     end # initialize
     
-    def create_tile_set name, file_name_or_images, properties
-      raise NotImplementedError
-    end
+    # def create_tile_set name, file_name_or_images, properties
+    #   raise NotImplementedError
+    # end
     
     def create_layer name, data, properties
       raise NotImplementedError
@@ -133,6 +136,13 @@ module TMX
       # @cache.draw x_off, y_off, z_off, x_range, y_range
       @layers.each_value.with_index do |layer, index|
         layer.draw x_off, y_off, z_off + index, x_range, y_range
+      end
+      @object_groups.each do |name, objects|
+        objects.each do |object|
+          image = tile_set[object[:gid]]
+          next if image.nil?
+          image.draw x_off+object[:x], y_off+object[:y]-32, z_off, 1, 1, Gosu::Color::WHITE
+        end
       end
     end # draw
     

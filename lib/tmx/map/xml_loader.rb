@@ -1,4 +1,4 @@
-module TMX
+module Tmx
   module Map::XMLLoader
     protected
     
@@ -27,7 +27,8 @@ module TMX
   
     def parse_object_def xml, group
       properties = xml.tmx_parse_properties.merge! xml.tmx_parse_attributes
-      name       = properties.delete(:name)
+      # name       = properties[:name]
+      name       = properties[:name]
     
       [:x, :y, :width, :height].each do |key|
         properties[key] = properties[key] * @scale_units

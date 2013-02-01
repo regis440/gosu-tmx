@@ -1,4 +1,4 @@
-module TMX
+module Tmx
   # WARNING this is currently deprecated and not actually used
   class Map::TileCache
     def initialize map
